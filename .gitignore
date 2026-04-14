@@ -16,5 +16,8 @@ build/
 .AppleDouble
 .LSOverride
 
+# Generated DMG output
+dist/
+
 # Claude
 .claude/
