@@ -43,6 +43,11 @@ struct CategoryRow: View {
                     Spacer()
 
                     if isHovered {
+                        Image(systemName: "line.3.horizontal")
+                            .font(.system(size: 10))
+                            .foregroundStyle(.tertiary)
+                            .help("Drag to reorder")
+
                         // Add Task directly to category
                         Button {
                             showAddDirectItem = true

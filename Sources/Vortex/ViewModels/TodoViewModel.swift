@@ -144,6 +144,32 @@ final class TodoViewModel: ObservableObject {
         subcategories(for: category).contains { subcategoryHasVisibleItems($0) }
     }
 
+    // MARK: - Reorder helpers
+
+    func moveTab(_ tab: TodoTab, before target: TodoTab) {
+        var ordered = tabs()
+        guard let fromIdx = ordered.firstIndex(of: tab),
+              let _ = ordered.firstIndex(of: target),
+              tab != target else { return }
+        ordered.remove(at: fromIdx)
+        guard let newTargetIdx = ordered.firstIndex(of: target) else { return }
+        ordered.insert(tab, at: newTargetIdx)
+        for (i, t) in ordered.enumerated() { t.order = Int16(i) }
+        PersistenceController.shared.save()
+    }
+
+    func moveCategory(_ category: Category, before target: Category, in tab: TodoTab) {
+        var ordered = categories(for: tab)
+        guard let fromIdx = ordered.firstIndex(of: category),
+              let _ = ordered.firstIndex(of: target),
+              category != target else { return }
+        ordered.remove(at: fromIdx)
+        guard let newTargetIdx = ordered.firstIndex(of: target) else { return }
+        ordered.insert(category, at: newTargetIdx)
+        for (i, c) in ordered.enumerated() { c.order = Int16(i) }
+        PersistenceController.shared.save()
+    }
+
     // MARK: - Count helpers
 
     func directItemCount(for category: Category) -> Int {

@@ -1,4 +1,5 @@
 import SwiftUI
+import UniformTypeIdentifiers
 
 struct StatusBarView: View {
     @EnvironmentObject var vm: TodoViewModel
@@ -7,6 +8,8 @@ struct StatusBarView: View {
     @State private var showAddCategory = false
     @State private var showAddTab = false
     @State private var tabToRename: TodoTab? = nil
+    @State private var draggingTab: TodoTab? = nil
+    @State private var draggingCategory: Category? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -72,6 +75,7 @@ struct StatusBarView: View {
                             TabPill(
                                 tab: tab,
                                 isSelected: vm.selectedTab?.id == tab.id,
+                                isDragging: draggingTab?.id == tab.id,
                                 onSelect: { vm.selectedTab = tab },
                                 onRename: { tabToRename = tab },
                                 onDelete: {
@@ -82,9 +86,20 @@ struct StatusBarView: View {
                                     PersistenceController.shared.save()
                                 }
                             )
+                            .onDrag {
+                                draggingTab = tab
+                                return NSItemProvider(object: (tab.id?.uuidString ?? "") as NSString)
+                            }
+                            .onDrop(
+                                of: [.plainText],
+                                delegate: TabDropDelegate(
+                                    target: tab,
+                                    dragging: $draggingTab,
+                                    vm: vm
+                                )
+                            )
                         }
 
-                        // Add tab button
                         Button { showAddTab = true } label: {
                             Image(systemName: "plus")
                                 .font(.system(size: 11, weight: .semibold))
@@ -113,6 +128,20 @@ struct StatusBarView: View {
                         LazyVStack(spacing: 0) {
                             ForEach(categories) { category in
                                 CategoryRow(category: category)
+                                    .opacity(draggingCategory?.id == category.id ? 0.4 : 1.0)
+                                    .onDrag {
+                                        draggingCategory = category
+                                        return NSItemProvider(object: (category.id?.uuidString ?? "") as NSString)
+                                    }
+                                    .onDrop(
+                                        of: [.plainText],
+                                        delegate: CategoryDropDelegate(
+                                            target: category,
+                                            tab: tab,
+                                            dragging: $draggingCategory,
+                                            vm: vm
+                                        )
+                                    )
                             }
                             Button {
                                 showAddCategory = true
@@ -201,6 +230,7 @@ struct StatusBarView: View {
 private struct TabPill: View {
     let tab: TodoTab
     let isSelected: Bool
+    let isDragging: Bool
     let onSelect: () -> Void
     let onRename: () -> Void
     let onDelete: () -> Void
@@ -218,10 +248,54 @@ private struct TabPill: View {
                 )
         }
         .buttonStyle(.plain)
+        .opacity(isDragging ? 0.4 : 1.0)
         .contextMenu {
             Button("Rename") { onRename() }
             Divider()
             Button("Delete Tab", role: .destructive) { onDelete() }
         }
+    }
+}
+
+// MARK: - Drop Delegates
+
+private struct TabDropDelegate: DropDelegate {
+    let target: TodoTab
+    @Binding var dragging: TodoTab?
+    let vm: TodoViewModel
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging, dragging != target else { return }
+        vm.moveTab(dragging, before: target)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+}
+
+private struct CategoryDropDelegate: DropDelegate {
+    let target: Category
+    let tab: TodoTab
+    @Binding var dragging: Category?
+    let vm: TodoViewModel
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging, dragging != target else { return }
+        vm.moveCategory(dragging, before: target, in: tab)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
     }
 }
