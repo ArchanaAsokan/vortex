@@ -299,3 +299,44 @@ private struct CategoryDropDelegate: DropDelegate {
         DropProposal(operation: .move)
     }
 }
+
+struct ItemDropDelegate: DropDelegate {
+    let target: TodoItem
+    let targetCategory: Category?
+    let targetSubcategory: SubCategory?
+    @Binding var dragging: TodoItem?
+    let vm: TodoViewModel
+
+    func dropEntered(info: DropInfo) {
+        guard let dragging, dragging != target else { return }
+        vm.moveItem(dragging, before: target,
+                    toCategory: targetCategory, toSubcategory: targetSubcategory)
+    }
+
+    func performDrop(info: DropInfo) -> Bool {
+        dragging = nil
+        return true
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+}
+
+struct ItemAppendDropDelegate: DropDelegate {
+    let targetCategory: Category?
+    let targetSubcategory: SubCategory?
+    @Binding var dragging: TodoItem?
+    let vm: TodoViewModel
+
+    func performDrop(info: DropInfo) -> Bool {
+        guard let dragging else { return false }
+        vm.appendItem(dragging, toCategory: targetCategory, toSubcategory: targetSubcategory)
+        self.dragging = nil
+        return true
+    }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? {
+        DropProposal(operation: .move)
+    }
+}
