@@ -91,6 +91,21 @@ struct CategoryRow: View {
                     ForEach(directItems) { item in
                         TodoItemRow(item: item)
                             .padding(.leading, 8)
+                            .opacity(vm.draggingItem?.id == item.id ? 0.4 : 1.0)
+                            .onDrag {
+                                vm.draggingItem = item
+                                return NSItemProvider(object: (item.id?.uuidString ?? "") as NSString)
+                            }
+                            .onDrop(
+                                of: [.plainText],
+                                delegate: ItemDropDelegate(
+                                    target: item,
+                                    targetCategory: category,
+                                    targetSubcategory: nil,
+                                    dragging: $vm.draggingItem,
+                                    vm: vm
+                                )
+                            )
                     }
 
                     // ── Sub-categories ────────────────────────
@@ -101,6 +116,18 @@ struct CategoryRow: View {
 
                     // Empty state — only when both direct items and subcategories are absent
                     if directItems.isEmpty && subcategories.isEmpty {
+                        Color.clear
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 8)
+                            .onDrop(
+                                of: [.plainText],
+                                delegate: ItemAppendDropDelegate(
+                                    targetCategory: category,
+                                    targetSubcategory: nil,
+                                    dragging: $vm.draggingItem,
+                                    vm: vm
+                                )
+                            )
                         HStack(spacing: 12) {
                             Button {
                                 showAddDirectItem = true
