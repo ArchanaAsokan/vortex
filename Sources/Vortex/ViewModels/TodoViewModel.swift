@@ -203,11 +203,19 @@ final class TodoViewModel: ObservableObject {
 
     func appendItem(_ item: TodoItem,
                     toCategory: Category?, toSubcategory: SubCategory?) {
+        let sourceCategory = item.category
+        let sourceSubcategory = item.subcategory
+
         let existing = itemsInContainer(category: toCategory, subcategory: toSubcategory)
             .filter { $0 != item }
         item.category = toCategory
         item.subcategory = toSubcategory
-        item.order = Int16((existing.map { Int($0.order) }.max() ?? -1) + 1)
+        item.order = Int16((existing.last.map { Int($0.order) } ?? -1) + 1)
+
+        if sourceCategory != toCategory || sourceSubcategory != toSubcategory {
+            compactOrder(category: sourceCategory, subcategory: sourceSubcategory)
+        }
+
         PersistenceController.shared.save()
     }
 
@@ -227,8 +235,8 @@ final class TodoViewModel: ObservableObject {
     }
 
     private func compactOrder(category: Category?, subcategory: SubCategory?) {
-        let items = itemsInContainer(category: category, subcategory: subcategory)
-        for (i, item) in items.enumerated() { item.order = Int16(i) }
+        let orderedItems = itemsInContainer(category: category, subcategory: subcategory)
+        for (i, item) in orderedItems.enumerated() { item.order = Int16(i) }
     }
 
     // MARK: - Count helpers
