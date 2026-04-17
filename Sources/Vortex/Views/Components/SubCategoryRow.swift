@@ -84,21 +84,50 @@ struct SubCategoryRow: View {
                 // Task rows
                 if isExpanded {
                     if visibleItems.isEmpty {
-                        Button {
-                            showAddItem = true
-                        } label: {
-                            Text("Add a task…")
-                                .font(.caption)
-                                .foregroundStyle(Color.secondary.opacity(0.7))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.leading, 36)
-                                .padding(.vertical, 4)
+                        ZStack {
+                            Color.clear
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 28)
+                                .onDrop(
+                                    of: [.plainText],
+                                    delegate: ItemAppendDropDelegate(
+                                        targetCategory: subcategory.category,
+                                        targetSubcategory: subcategory,
+                                        dragging: $vm.draggingItem,
+                                        vm: vm
+                                    )
+                                )
+                            Button {
+                                showAddItem = true
+                            } label: {
+                                Text("Add a task…")
+                                    .font(.caption)
+                                    .foregroundStyle(Color.secondary.opacity(0.7))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading, 36)
+                                    .padding(.vertical, 4)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     } else {
                         ForEach(visibleItems) { item in
                             TodoItemRow(item: item)
                                 .padding(.leading, 16)
+                                .opacity(vm.draggingItem?.id == item.id ? 0.4 : 1.0)
+                                .onDrag {
+                                    vm.draggingItem = item
+                                    return NSItemProvider(object: (item.id?.uuidString ?? "") as NSString)
+                                }
+                                .onDrop(
+                                    of: [.plainText],
+                                    delegate: ItemDropDelegate(
+                                        target: item,
+                                        targetCategory: subcategory.category,
+                                        targetSubcategory: subcategory,
+                                        dragging: $vm.draggingItem,
+                                        vm: vm
+                                    )
+                                )
                         }
                     }
                 }
