@@ -6,6 +6,7 @@ final class TodoViewModel: ObservableObject {
     @Published var showCompleted: Bool
     @Published var searchText: String = ""
     @Published var selectedTab: TodoTab?
+    @Published var draggingItem: TodoItem?
 
     let context: NSManagedObjectContext
     private var cancellables = Set<AnyCancellable>()
@@ -168,6 +169,66 @@ final class TodoViewModel: ObservableObject {
         ordered.insert(category, at: newTargetIdx)
         for (i, c) in ordered.enumerated() { c.order = Int16(i) }
         PersistenceController.shared.save()
+    }
+
+    func moveItem(_ item: TodoItem, before target: TodoItem,
+                  toCategory: Category?, toSubcategory: SubCategory?) {
+        // Save source container before re-assigning relationships
+        let sourceCategory = item.category
+        let sourceSubcategory = item.subcategory
+
+        // Collect items in the destination container (excluding the dragged item)
+        let destItems = itemsInContainer(category: toCategory, subcategory: toSubcategory)
+            .filter { $0 != item }
+
+        // Find insertion index
+        guard let targetIdx = destItems.firstIndex(of: target) else { return }
+
+        // Re-assign container relationships
+        item.category = toCategory
+        item.subcategory = toSubcategory
+
+        // Build new ordered list and assign order values
+        var newOrder = destItems
+        newOrder.insert(item, at: targetIdx)
+        for (i, t) in newOrder.enumerated() { t.order = Int16(i) }
+
+        // Compact source container if it changed
+        if sourceCategory != toCategory || sourceSubcategory != toSubcategory {
+            compactOrder(category: sourceCategory, subcategory: sourceSubcategory)
+        }
+
+        PersistenceController.shared.save()
+    }
+
+    func appendItem(_ item: TodoItem,
+                    toCategory: Category?, toSubcategory: SubCategory?) {
+        let existing = itemsInContainer(category: toCategory, subcategory: toSubcategory)
+            .filter { $0 != item }
+        item.category = toCategory
+        item.subcategory = toSubcategory
+        item.order = Int16((existing.map { Int($0.order) }.max() ?? -1) + 1)
+        PersistenceController.shared.save()
+    }
+
+    // Returns all items in a container regardless of showCompleted/search filters
+    private func itemsInContainer(category: Category?, subcategory: SubCategory?) -> [TodoItem] {
+        let req = TodoItem.fetchRequest()
+        if let sub = subcategory {
+            req.predicate = NSPredicate(format: "subcategory == %@", sub)
+        } else if let cat = category {
+            req.predicate = NSPredicate(format: "category == %@ AND subcategory == nil", cat)
+        } else {
+            return []
+        }
+        req.sortDescriptors = [NSSortDescriptor(key: "order", ascending: true),
+                               NSSortDescriptor(key: "createdAt", ascending: true)]
+        return (try? context.fetch(req)) ?? []
+    }
+
+    private func compactOrder(category: Category?, subcategory: SubCategory?) {
+        let items = itemsInContainer(category: category, subcategory: subcategory)
+        for (i, item) in items.enumerated() { item.order = Int16(i) }
     }
 
     // MARK: - Count helpers
