@@ -6,7 +6,6 @@ final class TodoViewModel: ObservableObject {
     @Published var showCompleted: Bool
     @Published var searchText: String = ""
     @Published var selectedTab: TodoTab?
-    @Published var draggingItem: TodoItem?
 
     let context: NSManagedObjectContext
     private var cancellables = Set<AnyCancellable>()

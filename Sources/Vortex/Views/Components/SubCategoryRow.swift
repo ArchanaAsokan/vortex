@@ -5,12 +5,15 @@ struct SubCategoryRow: View {
     @EnvironmentObject var vm: TodoViewModel
     @Environment(\.managedObjectContext) var context
 
+    @Binding var draggingItem: TodoItem?
+
     @State private var isExpanded: Bool
     @State private var isHovered = false
     @State private var showAddItem = false
 
-    init(subcategory: SubCategory) {
+    init(subcategory: SubCategory, draggingItem: Binding<TodoItem?>) {
         self.subcategory = subcategory
+        self._draggingItem = draggingItem
         _isExpanded = State(initialValue: subcategory.isExpanded)
     }
 
@@ -93,7 +96,7 @@ struct SubCategoryRow: View {
                                     delegate: ItemAppendDropDelegate(
                                         targetCategory: subcategory.category,
                                         targetSubcategory: subcategory,
-                                        dragging: $vm.draggingItem,
+                                        dragging: $draggingItem,
                                         vm: vm
                                     )
                                 )
@@ -113,9 +116,9 @@ struct SubCategoryRow: View {
                         ForEach(visibleItems) { item in
                             TodoItemRow(item: item)
                                 .padding(.leading, 16)
-                                .opacity(vm.draggingItem?.id == item.id ? 0.4 : 1.0)
+                                .opacity(draggingItem?.id == item.id ? 0.4 : 1.0)
                                 .onDrag {
-                                    vm.draggingItem = item
+                                    draggingItem = item
                                     return NSItemProvider(object: (item.id?.uuidString ?? "") as NSString)
                                 }
                                 .onDrop(
@@ -124,7 +127,7 @@ struct SubCategoryRow: View {
                                         target: item,
                                         targetCategory: subcategory.category,
                                         targetSubcategory: subcategory,
-                                        dragging: $vm.draggingItem,
+                                        dragging: $draggingItem,
                                         vm: vm
                                     )
                                 )

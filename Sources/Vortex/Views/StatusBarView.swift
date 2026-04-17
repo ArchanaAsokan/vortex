@@ -10,6 +10,7 @@ struct StatusBarView: View {
     @State private var tabToRename: TodoTab? = nil
     @State private var draggingTab: TodoTab? = nil
     @State private var draggingCategory: Category? = nil
+    @State private var draggingItem: TodoItem? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -127,7 +128,7 @@ struct StatusBarView: View {
                     ScrollView(.vertical, showsIndicators: false) {
                         LazyVStack(spacing: 0) {
                             ForEach(categories) { category in
-                                CategoryRow(category: category)
+                                CategoryRow(category: category, draggingItem: $draggingItem)
                                     .opacity(draggingCategory?.id == category.id ? 0.4 : 1.0)
                                     .onDrag {
                                         draggingCategory = category

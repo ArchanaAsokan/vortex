@@ -5,13 +5,16 @@ struct CategoryRow: View {
     @EnvironmentObject var vm: TodoViewModel
     @Environment(\.managedObjectContext) var context
 
+    @Binding var draggingItem: TodoItem?
+
     @State private var isExpanded: Bool
     @State private var isHovered = false
     @State private var showAddSubCategory = false
     @State private var showAddDirectItem = false
 
-    init(category: Category) {
+    init(category: Category, draggingItem: Binding<TodoItem?>) {
         self.category = category
+        self._draggingItem = draggingItem
         _isExpanded = State(initialValue: category.isExpanded)
     }
 
@@ -91,9 +94,9 @@ struct CategoryRow: View {
                     ForEach(directItems) { item in
                         TodoItemRow(item: item)
                             .padding(.leading, 8)
-                            .opacity(vm.draggingItem?.id == item.id ? 0.4 : 1.0)
+                            .opacity(draggingItem?.id == item.id ? 0.4 : 1.0)
                             .onDrag {
-                                vm.draggingItem = item
+                                draggingItem = item
                                 return NSItemProvider(object: (item.id?.uuidString ?? "") as NSString)
                             }
                             .onDrop(
@@ -102,7 +105,7 @@ struct CategoryRow: View {
                                     target: item,
                                     targetCategory: category,
                                     targetSubcategory: nil,
-                                    dragging: $vm.draggingItem,
+                                    dragging: $draggingItem,
                                     vm: vm
                                 )
                             )
@@ -110,7 +113,7 @@ struct CategoryRow: View {
 
                     // ── Sub-categories ────────────────────────
                     ForEach(subcategories) { sub in
-                        SubCategoryRow(subcategory: sub)
+                        SubCategoryRow(subcategory: sub, draggingItem: $draggingItem)
                             .padding(.leading, 8)
                     }
 
@@ -118,13 +121,13 @@ struct CategoryRow: View {
                     if directItems.isEmpty && subcategories.isEmpty {
                         Color.clear
                             .frame(maxWidth: .infinity)
-                            .frame(height: 8)
+                            .frame(height: 32)
                             .onDrop(
                                 of: [.plainText],
                                 delegate: ItemAppendDropDelegate(
                                     targetCategory: category,
                                     targetSubcategory: nil,
-                                    dragging: $vm.draggingItem,
+                                    dragging: $draggingItem,
                                     vm: vm
                                 )
                             )
