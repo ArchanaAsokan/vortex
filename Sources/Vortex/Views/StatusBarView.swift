@@ -330,9 +330,9 @@ struct ItemAppendDropDelegate: DropDelegate {
     let vm: TodoViewModel
 
     func performDrop(info: DropInfo) -> Bool {
-        guard let dragging else { return false }
-        vm.appendItem(dragging, toCategory: targetCategory, toSubcategory: targetSubcategory)
-        self.dragging = nil
+        guard let item = dragging else { return false }
+        vm.appendItem(item, toCategory: targetCategory, toSubcategory: targetSubcategory)
+        dragging = nil
         return true
     }
 
