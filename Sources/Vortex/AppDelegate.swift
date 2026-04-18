@@ -7,6 +7,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var popover: NSPopover!
     private var viewModel: TodoViewModel!
     private var cancellables = Set<AnyCancellable>()
+    private var eventMonitor: EventMonitor?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         let context = PersistenceController.shared.context
@@ -41,6 +42,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
             .store(in: &cancellables)
 
+        // Close popover when clicking outside
+        eventMonitor = EventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
+            guard let self, self.popover.isShown else { return }
+            self.closePopover()
+        }
+
         updateBadge()
     }
 
@@ -56,10 +63,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func togglePopover() {
         guard let button = statusItem.button else { return }
         if popover.isShown {
-            popover.performClose(nil)
+            closePopover()
         } else {
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            eventMonitor?.start()
         }
+    }
+
+    private func closePopover() {
+        popover.performClose(nil)
+        eventMonitor?.stop()
     }
 
     private func showSettingsMenu() {
