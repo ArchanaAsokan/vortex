@@ -42,7 +42,17 @@ Tab  →  Category  →  Sub-Category  →  Task
 
 ## Install
 
-### Option A — Build the DMG yourself (recommended)
+### Option A — Download the DMG (easiest)
+
+A pre-built DMG is available in the [`artifacts/`](artifacts/) folder in this repository.
+
+1. Download **`artifacts/Vortex.dmg`**
+2. Open it, drag **Vortex.app** into **Applications**
+3. Launch Vortex from Applications or Spotlight
+
+> **Note:** Because the app is not notarised, macOS may show a security warning on first launch. To open it anyway: right-click **Vortex.app** → **Open** → **Open**.
+
+### Option B — Build the DMG yourself
 
 ```bash
 git clone git@github.com:ArchanaAsokan/vortex.git
@@ -56,7 +66,7 @@ This produces `dist/Vortex.dmg`. Open it, drag **Vortex.app** into **Application
 open dist/Vortex.dmg
 ```
 
-### Option B — Run directly from Xcode
+### Option C — Run directly from Xcode
 
 ```bash
 git clone git@github.com:ArchanaAsokan/vortex.git
@@ -103,6 +113,8 @@ vortex/
 │   └── Views/
 │       ├── StatusBarView.swift   # Root view: search bar + tab bar + category list
 │       └── Components/           # CategoryRow, SubCategoryRow, TodoItemRow, Sheets
+├── artifacts/
+│   └── Vortex.dmg               # Pre-built DMG for direct download
 ├── scripts/
 │   └── build-dmg.sh             # Build + package script
 ├── project.yml                   # XcodeGen project spec
