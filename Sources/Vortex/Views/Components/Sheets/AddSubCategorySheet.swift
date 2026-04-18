@@ -8,21 +8,17 @@ struct AddSubCategorySheet: View {
     @Environment(\.dismiss) var dismiss
 
     @State private var name = ""
-    @FocusState private var focused: Bool
 
     var body: some View {
         NavigationStack {
             Form {
                 Section {
-                    ZStack(alignment: .leading) {
-                        if name.isEmpty {
-                            Text("e.g. Project Alpha, Q1 Goals")
-                                .foregroundColor(.secondary.opacity(0.4))
-                        }
-                        TextField("", text: $name)
-                            .focused($focused)
-                            .multilineTextAlignment(.leading)
-                    }
+                    LeftAlignedTextField(
+                        placeholder: "e.g. Project Alpha, Q1 Goals",
+                        text: $name,
+                        focusOnAppear: true
+                    )
+                    .frame(height: 22)
                 } header: {
                     Text("Sub-Category Name")
                 } footer: {
@@ -42,7 +38,6 @@ struct AddSubCategorySheet: View {
             }
         }
         .frame(width: 320, height: 180)
-        .onAppear { focused = true }
     }
 
     private func save() {

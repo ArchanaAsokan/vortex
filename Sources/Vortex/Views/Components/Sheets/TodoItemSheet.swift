@@ -15,7 +15,6 @@ struct TodoItemSheet: View {
     @State private var priority: Int16 = 2
     @State private var dueDateEnabled = false
     @State private var dueDate = Date()
-    @FocusState private var titleFocused: Bool
 
     private var isEditing: Bool { editingItem != nil }
 
@@ -29,15 +28,12 @@ struct TodoItemSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    ZStack(alignment: .leading) {
-                        if title.isEmpty {
-                            Text("What needs to be done?")
-                                .foregroundColor(.secondary.opacity(0.4))
-                        }
-                        TextField("", text: $title)
-                            .focused($titleFocused)
-                            .multilineTextAlignment(.leading)
-                    }
+                    LeftAlignedTextField(
+                        placeholder: "What needs to be done?",
+                        text: $title,
+                        focusOnAppear: true
+                    )
+                    .frame(height: 22)
                 } header: {
                     Text("Task")
                 } footer: {
@@ -101,7 +97,6 @@ struct TodoItemSheet: View {
                 dueDateEnabled = item.hasDueDate
                 dueDate = item.dueDate ?? Date()
             }
-            titleFocused = true
         }
     }
 

@@ -19,6 +19,7 @@
 		3F5AD9DD37FFF4E79EA9D898 /* SubCategoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 836E72E302530E6B6DEC9E07 /* SubCategoryRow.swift */; };
 		47D42EC4C3D2D157DD2ECBA5 /* Category+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73C14958277B1B8F5E78D696 /* Category+CoreData.swift */; };
 		5A677FD986C918A92EE50569 /* TodoItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9525F8DE014E61B0BBA0D058 /* TodoItemRow.swift */; };
+		AA11BB22CC33DD44EE55FF66 /* LeftAlignedTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF67 /* LeftAlignedTextField.swift */; };
 		9D2BD7052E84B3C18B278E83 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E6242F04F9153198E7F2C2 /* AppDelegate.swift */; };
 		C5B298A77B5C2ABB557ED7A2 /* AddSubCategorySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99524CFF5E18D5DE4E280599 /* AddSubCategorySheet.swift */; };
 		DFDF1BAB31DCE853915B7B74 /* TodoTab+CoreData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A53840E6CA7CB74BB3B2A50 /* TodoTab+CoreData.swift */; };
@@ -42,6 +43,7 @@
 		73C14958277B1B8F5E78D696 /* Category+CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Category+CoreData.swift"; sourceTree = "<group>"; };
 		836E72E302530E6B6DEC9E07 /* SubCategoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCategoryRow.swift; sourceTree = "<group>"; };
 		9525F8DE014E61B0BBA0D058 /* TodoItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoItemRow.swift; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE55FF67 /* LeftAlignedTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeftAlignedTextField.swift; sourceTree = "<group>"; };
 		99524CFF5E18D5DE4E280599 /* AddSubCategorySheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddSubCategorySheet.swift; sourceTree = "<group>"; };
 		9D38078D705D3CB23E294686 /* TodoViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoViewModel.swift; sourceTree = "<group>"; };
 		B27A3CCBC49CA43A7D72F51F /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				491D35568295B6796F53F15E /* CategoryRow.swift */,
 				836E72E302530E6B6DEC9E07 /* SubCategoryRow.swift */,
 				9525F8DE014E61B0BBA0D058 /* TodoItemRow.swift */,
+				AA11BB22CC33DD44EE55FF67 /* LeftAlignedTextField.swift */,
 				50D2E73DA8ACAB47AA1AD37D /* Sheets */,
 			);
 			path = Components;
@@ -221,6 +224,7 @@
 				1659D25C454FEE0FFE9AE429 /* CategoryRow.swift in Sources */,
 				0F308D6641B2299A1D07C4FF /* EventMonitor.swift in Sources */,
 				10FDDAEA192D505282436ABF /* LoginItemManager.swift in Sources */,
+				AA11BB22CC33DD44EE55FF66 /* LeftAlignedTextField.swift in Sources */,
 				FE6A31F6B4D9F1CF498A74DF /* PersistenceController.swift in Sources */,
 				1EA991FD3D7BDBF5B6BF2176 /* StatusBarView.swift in Sources */,
 				FE055A4E203027DEF85B586B /* SubCategory+CoreData.swift in Sources */,

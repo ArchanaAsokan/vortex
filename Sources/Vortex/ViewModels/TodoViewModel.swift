@@ -97,7 +97,10 @@ final class TodoViewModel: ObservableObject {
 
     /// Items belonging directly to a category (no sub-category).
     func directItems(for category: Category) -> [TodoItem] {
-        var predicates: [NSPredicate] = [NSPredicate(format: "category == %@", category)]
+        var predicates: [NSPredicate] = [
+            NSPredicate(format: "category == %@", category),
+            NSPredicate(format: "subcategory == nil")
+        ]
         if !showCompleted {
             predicates.append(NSPredicate(format: "isCompleted == NO"))
         }
@@ -183,9 +186,9 @@ final class TodoViewModel: ObservableObject {
         // Find insertion index
         guard let targetIdx = destItems.firstIndex(of: target) else { return }
 
-        // Re-assign container relationships
-        item.category = toCategory
+        // Re-assign container relationships (subcategory items must not also set category)
         item.subcategory = toSubcategory
+        item.category = toSubcategory == nil ? toCategory : nil
 
         // Build new ordered list and assign order values
         var newOrder = destItems
@@ -207,8 +210,8 @@ final class TodoViewModel: ObservableObject {
 
         let existing = itemsInContainer(category: toCategory, subcategory: toSubcategory)
             .filter { $0 != item }
-        item.category = toCategory
         item.subcategory = toSubcategory
+        item.category = toSubcategory == nil ? toCategory : nil
         item.order = Int16((existing.last.map { Int($0.order) } ?? -1) + 1)
 
         if sourceCategory != toCategory || sourceSubcategory != toSubcategory {
