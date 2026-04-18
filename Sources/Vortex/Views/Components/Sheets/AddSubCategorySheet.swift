@@ -21,6 +21,7 @@ struct AddSubCategorySheet: View {
                         }
                         TextField("", text: $name)
                             .focused($focused)
+                            .multilineTextAlignment(.leading)
                     }
                 } header: {
                     Text("Sub-Category Name")

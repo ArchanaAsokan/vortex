@@ -23,6 +23,7 @@ struct AddTabSheet: View {
                         }
                         TextField("", text: $name)
                             .focused($focused)
+                            .multilineTextAlignment(.leading)
                     }
                 } header: {
                     Text("Tab Name")

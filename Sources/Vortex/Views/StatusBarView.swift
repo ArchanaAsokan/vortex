@@ -29,6 +29,7 @@ struct StatusBarView: View {
                     TextField("", text: $vm.searchText)
                         .textFieldStyle(.plain)
                         .font(.system(size: 13))
+                        .multilineTextAlignment(.leading)
                 }
 
                 if !vm.searchText.isEmpty {

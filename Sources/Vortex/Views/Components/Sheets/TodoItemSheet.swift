@@ -36,6 +36,7 @@ struct TodoItemSheet: View {
                         }
                         TextField("", text: $title)
                             .focused($titleFocused)
+                            .multilineTextAlignment(.leading)
                     }
                 } header: {
                     Text("Task")
