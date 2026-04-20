@@ -47,13 +47,5 @@ rm -rf "$BUILD_DIR"
 
 echo "  Built: $APP_BUNDLE"
 
-# ── Launch ───────────────────────────────────────────────────────────────────
-step "Launching $APP_NAME"
-if pgrep -x "$APP_NAME" > /dev/null; then
-    echo "  Stopping running $APP_NAME..."
-    pkill -x "$APP_NAME"
-    sleep 0.5
-fi
-
-open "$APP_BUNDLE"
-echo "  Launched: $APP_BUNDLE"
+echo
+echo "✓ Done. To launch: open \"$APP_BUNDLE\""
