@@ -29,8 +29,7 @@ xcodebuild \
   -scheme "${SCHEME}" \
   -configuration "${CONFIGURATION}" \
   -derivedDataPath "${BUILD_DIR}" \
-  CODE_SIGN_IDENTITY="-" \
-  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO \
   ONLY_ACTIVE_ARCH=YES \
   build \
   | grep -E "^(Build|CompileSwift|error:|warning:)" || true
